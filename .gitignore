@@ -58,3 +58,4 @@ local.settings.json
 
 # JetBrains Rider
 .idea/
+church-api/appsettings.json
