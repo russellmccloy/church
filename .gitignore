@@ -1,0 +1,60 @@
+# Ignore build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+
+# User-specific files for Rider
+.idea/
+
+# ASP.NET temporary files
+App_Data/
+GeneratedFiles/
+
+# Ignore web.config transformation files
+web.config*
+
+# Node.js dependencies
+node_modules/
+
+# Npm logs
+npm-debug.log*
+
+# Package directories
+packages/
+.vs/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows Installer build output
+*.wixobj
+*.wixpdb
+
+# User-specific VS Code settings
+.vscode/
+
+# Ignore ASP.NET Core's environment files (optional)
+.env
+.env.local
+.env.*.local
+
+# Ignore other system-specific files
+.DS_Store
+Thumbs.db
+
+# Azure Functions
+local.settings.json
+
+# Visual Studio for Mac
+.vscode/
+
+# JetBrains Rider
+.idea/

@@ -1,0 +1,62 @@
+﻿/* Custom CSS for Swagger UI using #006699 as the primary color */
+
+/* Set the primary header background color */
+
+.swagger-ui .topbar {
+    background-color: red !important;
+}
+
+/* Style the primary buttons */
+.swagger-ui .btn {
+    background-color: #006699;
+    border-color: #006699;
+    color: #ffffff;
+}
+
+    .swagger-ui .btn:hover {
+        background-color: #004d66;
+        border-color: #004d66;
+    }
+
+/* Change the text color for headers */
+.swagger-ui .info h1,
+.swagger-ui .info h2,
+.swagger-ui .info h3 {
+    color: #006699;
+}
+
+/* Adjust the link colors */
+.swagger-ui a {
+    color: #006699;
+}
+
+    .swagger-ui a:hover {
+        color: #004d66;
+    }
+
+/* Modify the operation summary bar */
+.swagger-ui .opblock-summary {
+    background-color: #006699;
+    color: #ffffff;
+}
+
+    .swagger-ui .opblock-summary:hover {
+        background-color: #004d66;
+    }
+
+/* Customize the request/response headers */
+.swagger-ui .header-row {
+    background-color: #e6f3f8;
+    color: #006699;
+}
+
+/* Adjust the parameter section */
+.swagger-ui .parameters {
+    border-color: #006699;
+}
+
+/* Set the background color for code blocks */
+.swagger-ui .microlight {
+    background-color: #f0f8ff;
+    color: #006699;
+}
