@@ -23,6 +23,5 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2021-04-15' = {
       }
     ]
     enableFreeTier: true
-    li
   }
 }
