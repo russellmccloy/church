@@ -1,9 +1,14 @@
+using Azure.Storage.Blobs;
+using church_api.Services.Abstractions;
+using church_api.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Identity.Abstractions;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.Resource;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
+using Microsoft.Azure.Cosmos;
 
 namespace church_api
 {
@@ -49,7 +54,29 @@ namespace church_api
                         Array.Empty<string>()
                     }
                 });
+                
+                options.OperationFilter<SwaggerFileOperationFilter>();
             });
+
+
+            // Register BlobServiceClient
+            builder.Services.AddSingleton(x => new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage")));
+
+            // Register IImageUploader and its implementation
+            builder.Services.AddTransient<IFileUploader, FileUploader>();
+
+            // Step 1: Add CosmosClient to DI container
+            builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
+            {
+                var connectionString = builder.Configuration.GetValue<string>("CosmosDbSettings:Connection");
+                return new CosmosClient(connectionString);
+            });
+
+            // Step 2: Register CosmosDbClient with the generic interface
+            builder.Services.AddScoped(typeof(ICosmosDbClient<>), typeof(CosmosDbClient<>));
+
+            // Step 3: Optionally, configure CosmosDbSettings for database/container names
+            builder.Services.Configure<CosmosDbSettings>(builder.Configuration.GetSection("CosmosDbSettings"));
 
             var app = builder.Build();
 
