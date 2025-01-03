@@ -1,0 +1,34 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.31.92.45157",
+      "templateHash": "4824173429303915699"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2021-04-15",
+      "name": "my-cosmosdb-account",
+      "location": "Australia East",
+      "properties": {
+        "databaseAccountOfferType": "Standard",
+        "locations": [
+          {
+            "locationName": "Australia East",
+            "failoverPriority": 0
+          }
+        ],
+        "kind": "MongoDB",
+        "capabilities": [
+          {
+            "name": "EnableFreeTier"
+          }
+        ]
+      }
+    }
+  ]
+}

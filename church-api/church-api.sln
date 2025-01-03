@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35431.28
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "church-api", "church-api.csproj", "{15706A01-73F0-4625-97AE-94E1F50999EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "church-api", "church-api.csproj", "{15706A01-73F0-4625-97AE-94E1F50999EB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "church-ui", "..\church-ui\church-ui.csproj", "{791B8CC7-6A11-426E-BC21-440F1040AB81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{15706A01-73F0-4625-97AE-94E1F50999EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15706A01-73F0-4625-97AE-94E1F50999EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15706A01-73F0-4625-97AE-94E1F50999EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{791B8CC7-6A11-426E-BC21-440F1040AB81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{791B8CC7-6A11-426E-BC21-440F1040AB81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{791B8CC7-6A11-426E-BC21-440F1040AB81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{791B8CC7-6A11-426E-BC21-440F1040AB81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

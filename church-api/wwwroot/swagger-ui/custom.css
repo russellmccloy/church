@@ -3,31 +3,31 @@
 /* Set the primary header background color */
 
 .swagger-ui .topbar {
-    background-color: red !important;
+    background-color: #006699 !important;
 }
 
 /* Style the primary buttons */
 .swagger-ui .btn {
-    background-color: #006699;
-    border-color: #006699;
+    background-color: azure;
+    border-color: #8DC43E;
     color: #ffffff;
 }
 
-    .swagger-ui .btn:hover {
-        background-color: #004d66;
-        border-color: #004d66;
-    }
+.swagger-ui .btn:hover {
+    background-color: #004d66;
+    border-color: #004d66;
+}
 
 /* Change the text color for headers */
 .swagger-ui .info h1,
 .swagger-ui .info h2,
 .swagger-ui .info h3 {
-    color: #006699;
+    color: #8DC43E;
 }
 
 /* Adjust the link colors */
 .swagger-ui a {
-    color: #006699;
+    color: #8DC43E;
 }
 
     .swagger-ui a:hover {
@@ -36,13 +36,13 @@
 
 /* Modify the operation summary bar */
 .swagger-ui .opblock-summary {
-    background-color: #006699;
+    background-color: #829D5E;
     color: #ffffff;
 }
 
-    .swagger-ui .opblock-summary:hover {
-        background-color: #004d66;
-    }
+.swagger-ui .opblock-summary:hover {
+    background-color: #8DC43E;
+}
 
 /* Customize the request/response headers */
 .swagger-ui .header-row {

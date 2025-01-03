@@ -1,7 +1,9 @@
-﻿namespace church_api.Services.Abstractions
+﻿using Azure.Storage.Blobs.Models;
+
+namespace church_api.Services.Abstractions
 {
     public interface IFileUploader
     {
-        Task UploadFileAsync(string filePath, string blobName);
+        Task<Azure.Response<BlobContentInfo>> UploadFileAsync(string filePath, string blobName);
     }
 }

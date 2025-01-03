@@ -3,7 +3,7 @@ using church_api.Services.Abstractions;
 using Microsoft.Extensions.Options;
 using System.Reflection.Metadata;
 using System.Threading;
-using church_api.Controllers;
+using church_api.Models;
 
 namespace church_api.Services
 {
@@ -38,7 +38,7 @@ namespace church_api.Services
             _container = containerResponse.Container;
         }
 
-        public async Task<T?> GetItemAsync(string id, string partitionKey)
+        public async Task<T?> GetItemAsync(string id, string partitionKey, CancellationToken cancellationToken)
         {
             try
             {
@@ -49,6 +49,28 @@ namespace church_api.Services
             {
                 return default;
             }
+        }
+
+        public async Task<List<T>> ExecuteQueryAsync<T>(QueryDefinition query, string partitionKey, CancellationToken cancellationToken)
+        {
+            ArgumentNullException.ThrowIfNull(_container);
+
+            var results = new List<T>();
+            var options = new QueryRequestOptions { PartitionKey = new PartitionKey(partitionKey) };
+            var charge = 0.0;
+
+            using var resultSetIterator = _container.GetItemQueryIterator<T>(query, requestOptions: options);
+
+            while (resultSetIterator.HasMoreResults)
+            {
+                var response = await resultSetIterator.ReadNextAsync(cancellationToken);
+                results.AddRange(response);
+                charge += response.RequestCharge;
+            }
+
+            // TODO: what is this for?: LogQueryOperation("FullQuery", query.QueryText, partitionKey, results.Count, charge);
+
+            return results;
         }
 
         //public async Task<IEnumerable<T>> QueryItemsAsync(string query, string partitionKey)
@@ -71,10 +93,11 @@ namespace church_api.Services
         //    return results;
         //}
 
-        public async Task AddItemAsync<T>(T item) where T : DocumentBase
+        public async Task<T?> CreateItemAsync<T>(T item, CancellationToken cancellationToken) where T : DocumentBase
         {
-            await _container.CreateItemAsync(item, new PartitionKey(item.DataType));
+            var response = await _container.UpsertItemAsync(item, new PartitionKey(item.DataType), requestOptions: null, cancellationToken);
             //var response = await _container.UpsertItemAsync(item, new PartitionKey(document.DataType), null, cancellationToken);
+            return response;
         }
 
         //public async Task UpdateItemAsync(string id, T item, string partitionKey)

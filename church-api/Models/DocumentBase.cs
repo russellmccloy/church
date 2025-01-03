@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace church_api.Controllers;
+namespace church_api.Models;
 
 public abstract class DocumentBase
 {

@@ -9,6 +9,9 @@ using Microsoft.Identity.Web.Resource;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Azure.Cosmos;
+using church_api.Repositories.Abstractions;
+using church_api.Repositories;
+using church_api.Mapping;
 
 namespace church_api
 {
@@ -58,13 +61,16 @@ namespace church_api
                 options.OperationFilter<SwaggerFileOperationFilter>();
             });
 
+            // Register AutoMapper
+            builder.Services.AddAutoMapper(typeof(MappingProfile)); // Replace MappingProfile with your profile class
 
             // Register BlobServiceClient
             builder.Services.AddSingleton(x => new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage")));
 
             // Register IImageUploader and its implementation
             builder.Services.AddTransient<IFileUploader, FileUploader>();
-
+            builder.Services.AddTransient<IPrayerCardRepository, PrayerCardRepository>();
+            
             // Step 1: Add CosmosClient to DI container
             builder.Services.AddSingleton<CosmosClient>(serviceProvider =>
             {

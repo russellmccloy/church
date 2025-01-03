@@ -33,7 +33,7 @@ namespace church_api.Controllers
 
             var blobName = file.FileName;
 
-            await _imageUploader.UploadFileAsync(filePath, blobName);
+            var xxx = await _imageUploader.UploadFileAsync(filePath, blobName);
 
             System.IO.File.Delete(filePath);
 

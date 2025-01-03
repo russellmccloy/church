@@ -5,7 +5,7 @@ using Microsoft.Graph;
 
 namespace church_api.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]/")]
     [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:Scopes")]

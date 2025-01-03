@@ -1,5 +1,7 @@
-﻿using church_api.Services.Abstractions;
+﻿using church_api.Models;
+using church_api.Services.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 
 namespace church_api.Controllers
 {
@@ -15,9 +17,9 @@ namespace church_api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetItem(string id)
+        public async Task<IActionResult> GetItem(string id, CancellationToken cancellationToken)
         {
-            var item = await _cosmosDbClient.GetItemAsync(id, "PrayerCard");
+            var item = await _cosmosDbClient.GetItemAsync(id, "PrayerCard", cancellationToken);
 
             if (item == null)
             {
@@ -28,9 +30,9 @@ namespace church_api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddItem([FromBody] PrayerCard entity)
+        public async Task<IActionResult> AddItem([FromBody] PrayerCard entity, CancellationToken cancellationToken)
         {
-            await _cosmosDbClient.AddItemAsync(entity);
+            await _cosmosDbClient.CreateItemAsync(entity, cancellationToken);
             return CreatedAtAction(nameof(GetItem), new { id = entity.Id }, entity);
         }
     }
