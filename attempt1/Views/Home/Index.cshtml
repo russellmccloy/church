@@ -1,0 +1,35 @@
+@{
+    var apiResultJson = ViewData["ApiResult"]?.ToString();
+    var apiResults = string.IsNullOrEmpty(apiResultJson)
+        ? null
+        : System.Text.Json.JsonSerializer.Deserialize<List<System.Text.Json.JsonElement>>(apiResultJson);
+}
+
+<div>
+    <h2>API Results</h2>
+    @if (apiResults != null && apiResults.Any())
+    {
+        <div class="api-results">
+            @foreach (var item in apiResults)
+            {
+                <div class="api-result-item" style="border: 1px solid #ddd; padding: 10px; margin: 10px 0;">
+                    <h3>@item.GetProperty("name").GetString()</h3>
+                    <p><strong>Description:</strong> @item.GetProperty("description").GetString()</p>
+                    <p><strong>Id:</strong> @item.GetProperty("id").GetString()</p>
+                    <p><strong>UserId:</strong> @item.GetProperty("userId").GetString()</p>
+                    <p>
+                        <strong>Image:</strong><br />
+                        <img src="https://church2.blob.core.windows.net/images/@item.GetProperty("imagePath").GetString()"
+                             alt="@item.GetProperty("name").GetString()"
+                             style="max-width: 200px; max-height: 200px;" />
+
+                    </p>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No results found.</p>
+    }
+</div>

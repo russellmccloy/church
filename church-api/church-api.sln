@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "church-api", "church-api.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "church-ui", "..\church-ui\church-ui.csproj", "{791B8CC7-6A11-426E-BC21-440F1040AB81}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "attempt1", "..\attempt1\attempt1.csproj", "{1608F4DF-5B2F-48EF-BA17-6A221B09F577}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "attempt2", "..\attempt2\attempt2.csproj", "{0E3AB0CB-EE44-46A5-B4FA-F5836F14715C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{791B8CC7-6A11-426E-BC21-440F1040AB81}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{791B8CC7-6A11-426E-BC21-440F1040AB81}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{791B8CC7-6A11-426E-BC21-440F1040AB81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1608F4DF-5B2F-48EF-BA17-6A221B09F577}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1608F4DF-5B2F-48EF-BA17-6A221B09F577}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1608F4DF-5B2F-48EF-BA17-6A221B09F577}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1608F4DF-5B2F-48EF-BA17-6A221B09F577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E3AB0CB-EE44-46A5-B4FA-F5836F14715C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E3AB0CB-EE44-46A5-B4FA-F5836F14715C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E3AB0CB-EE44-46A5-B4FA-F5836F14715C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E3AB0CB-EE44-46A5-B4FA-F5836F14715C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

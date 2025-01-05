@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 
-namespace church_ui
+namespace attempt2
 {
     public class Program
     {
@@ -13,22 +13,11 @@ namespace church_ui
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var azureAdConfig = builder.Configuration.GetSection("DownstreamApi").GetChildren();
-            foreach (var item in azureAdConfig)
-            {
-                Console.WriteLine($"{item.Key}: {item.Value}");
-            }
+            var initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ') ?? builder.Configuration["MicrosoftGraph:Scopes"]?.Split(' ');
 
-            // 1. Add Microsoft Identity Web authentication for the Web App
+            // Add services to the container.
             builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
-
-            // 2. Add Microsoft Identity Web API authentication to acquire tokens for the downstream API
-            builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration.GetSection("DownstreamApi"))
-                .EnableTokenAcquisitionToCallDownstreamApi()
-                .AddInMemoryTokenCaches();  // Allows in-memory token caching
-
-
 
             builder.Services.AddControllersWithViews(options =>
             {
@@ -39,8 +28,6 @@ namespace church_ui
             });
             builder.Services.AddRazorPages()
                 .AddMicrosoftIdentityUI();
-
-            builder.Services.AddHttpClient();
 
             var app = builder.Build();
 
@@ -57,7 +44,6 @@ namespace church_ui
 
             app.UseRouting();
 
-            app.UseAuthentication(); // Add authentication middleware
             app.UseAuthorization();
 
             app.MapControllerRoute(
