@@ -1,0 +1,29 @@
+@{
+    ViewData["Title"] = "Upload Cards";
+}
+
+<h2>Upload Cards</h2>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<form enctype="multipart/form-data" method="post" action="@Url.Action("UploadImages", "UploadCards")">
+    <div class="form-group">
+        <label for="adultId">Adult ID:</label>
+        <input type="number" id="adultId" name="adultId" class="form-control" required />
+    </div>
+
+    <div class="form-group">
+        <label for="files">Select Images:</label>
+        <input type="file" id="files" name="files" class="form-control" multiple />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>

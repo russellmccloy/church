@@ -1,27 +1,59 @@
-@description('The name ofthe CosmosDb account.')
-param cosmosDbName string
+param location string = resourceGroup().location
+param storageAccountName string
+param webAppName string
+param appServicePlanName string
 
-@description('Optional. The region where the resources live.')
-@allowed([
-  'australiaeast'
-  'australiasoutheast'
-  'australiacentral'
-  'australiasoutheast'
-])
-param location string = 'australiaeast'
+var requiredAppSettings = [
+   {
+     name: 'ChurchStorage__AccountName'
+     value: storageAccountName
+   }
+  {
+    name: 'ChurchStorage__ContainerName'
+    value: 'images'
+  }
+]
 
-resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2021-04-15' = {
-  name: cosmosDbName
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+  name: storageAccountName
   location: location
-  kind: 'GlobalDocumentDB'
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'StorageV2'
+}
+
+resource appServicePlan 'Microsoft.Web/serverfarms@2022-09-01' = {
+  name: appServicePlanName
+  location: location
+   properties: {
+    reserved: true
+   }
+   sku: {
+     name: 'F1'
+   }
+   kind: 'linux'
+ }
+
+resource webApp 'Microsoft.Web/sites@2022-09-01' = {
+  name: webAppName
+  location: location
+  identity: {
+      type: 'SystemAssigned'
+  }
   properties: {
-    databaseAccountOfferType: 'Standard'
-    locations: [
-      {
-        locationName: 'Australia East'
-        failoverPriority: 0
-      }
-    ]
-    enableFreeTier: true
+    serverFarmId: appServicePlan.id
+    siteConfig: {
+      appSettings: requiredAppSettings
+    }
+  }
+}
+
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(webApp.id, 'StorageBlobDataContributor')
+  scope: storageAccount
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe') // Storage Blob Data Contributor role ID
+    principalId: webApp.identity.principalId
   }
 }

@@ -1,4 +1,4 @@
-namespace church_ui.Models
+namespace Models
 {
     public class ErrorViewModel
     {

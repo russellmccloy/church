@@ -1,5 +1,12 @@
+/* Base Styling */
 html {
   font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.6;
+  background: linear-gradient(120deg, #f5f7fa, #c3cfe2);
+  color: #333;
+  position: relative;
+  min-height: 100%;
 }
 
 @media (min-width: 768px) {
@@ -8,15 +15,72 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
   margin-bottom: 60px;
+}
+
+/* Button Enhancements */
+.btn {
+  background-color: #258cfb;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn:hover {
+  background-color: #1a6ad9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn:focus, 
+.btn:active:focus, 
+.btn-link.nav-link:focus, 
+.form-control:focus, 
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  outline: none;
+}
+
+/* Form Elements */
+.form-control {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #258cfb;
+  box-shadow: 0 0 5px rgba(37, 140, 251, 0.5);
+}
+
+/* Footer Styling */
+footer {
+  margin-top: auto;
+  padding: 1rem 0;
+  background-color: #1a1a1a;
+  color: white;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+/* Add interesting hover states for links */
+a {
+  color: #258cfb;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #1a6ad9;
+  text-decoration: underline;
 }

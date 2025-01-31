@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 
-namespace church_ui
+namespace attempt1
 {
     public class Program
     {
@@ -13,22 +13,39 @@ namespace church_ui
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var azureAdConfig = builder.Configuration.GetSection("DownstreamApi").GetChildren();
-            foreach (var item in azureAdConfig)
+            var initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ') ?? builder.Configuration["MicrosoftGraph:Scopes"]?.Split(' ');
+
+            // Add services to the container.
+            //builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+            //    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+
+            builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
+            .EnableTokenAcquisitionToCallDownstreamApi(
+                //new string[] {
+                //    builder.Configuration.GetSection("DownstreamApi:Scopes:Read").Get<string>()!,
+                //    builder.Configuration.GetSection("DownstreamApi:Scopes:Write").Get<string>()!
+                //}
+            )
+            .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
+            .AddInMemoryTokenCaches();
+
+            builder.Services.AddAuthorization(options =>
             {
-                Console.WriteLine($"{item.Key}: {item.Value}");
-            }
-
-            // 1. Add Microsoft Identity Web authentication for the Web App
-            builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
-
-            // 2. Add Microsoft Identity Web API authentication to acquire tokens for the downstream API
-            builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration.GetSection("DownstreamApi"))
-                .EnableTokenAcquisitionToCallDownstreamApi()
-                .AddInMemoryTokenCaches();  // Allows in-memory token caching
-
-
+                options.AddPolicy("AdminsOnly", policy =>
+                    policy.RequireClaim("groups", "AdminsUI"));
+            });
+            
+            //builder.Services.AddAuthorization(options =>
+            //{
+            //    options.AddPolicy("AdminsOnly", policy =>
+            //        policy.RequireAssertion(context =>
+            //        {
+            //            var groupClaimType = "groups";
+            //            var adminGroupId = "<Your-Admins-Group-Object-ID>";
+            //            return context.User.HasClaim(c =>
+            //                c.Type == groupClaimType && c.Value == adminGroupId);
+            //        }));
+            //});
 
             builder.Services.AddControllersWithViews(options =>
             {
@@ -40,8 +57,9 @@ namespace church_ui
             builder.Services.AddRazorPages()
                 .AddMicrosoftIdentityUI();
 
-            builder.Services.AddHttpClient();
-
+            // Add configuration for Azure Blob Storage
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -57,7 +75,6 @@ namespace church_ui
 
             app.UseRouting();
 
-            app.UseAuthentication(); // Add authentication middleware
             app.UseAuthorization();
 
             app.MapControllerRoute(

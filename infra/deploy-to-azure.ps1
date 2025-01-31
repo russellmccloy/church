@@ -6,7 +6,7 @@ Connect-AzAccount -UseDeviceAuthentication
 $context = Get-AzSubscription -SubscriptionName 'RussDefault'
 Set-AzContext $context
 
-$resourceGroupName = 'church-rg'
+$resourceGroupName = 'church-dev01-rg'
 $location = 'australiaeast'
 
 # Step 3:
@@ -35,6 +35,6 @@ New-AzResourceGroupDeployment `
 
 # Step 7:
 # Clean up resources
-Remove-AzResourceGroup -Name $resourceGroupName -Force
+# Remove-AzResourceGroup -Name $resourceGroupName -Force
 
 

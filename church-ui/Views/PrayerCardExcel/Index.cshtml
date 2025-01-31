@@ -1,0 +1,73 @@
+@model List<Adult>
+
+<h2 class="text-center mt-4">All Prayer Cards for the Current Week</h2>
+
+<div class="container mt-3">
+    <div class="row">
+        @foreach (var adult in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm rounded-3 hover-shadow">
+                    <div class="card-header text-center">
+                        <h5 class="card-title">
+                            @adult.AdultName
+                            <br />
+                            <a href="@Url.Action("Details", "PrayerCardExcel", new { id = adult.AdultId })" class="text-white" style="font-size: 0.9rem;">View Details</a>
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var youth in adult.YouthList)
+                        {
+                            <div class="mb-3">
+                                <h6 class="card-subtitle mb-2">@youth.Name - @youth.Age</h6>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-5px); /* Slight upward movement on hover */
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow effect */
+    }
+
+    .card-header {
+        padding: 1.2rem; /* Adds padding inside the card header */
+        border-bottom: 2px solid #f1f1f1; /* Adds a subtle border under the header */
+        background-color: #A0B5A3 !important;
+    }
+
+    .card-title {
+        font-size: 1.25rem; /* Larger font for the title */
+        font-weight: bold; /* Bold title */
+    }
+
+    .card-subtitle {
+        font-size: 1rem; /* Font size for the youth info */
+    }
+
+    .card-body {
+        padding: 1.25rem; /* Adds more padding inside the card body */
+    }
+
+    .hover-shadow:hover {
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .text-muted {
+        color: #A0B5A3 !important; /* Subtle muted color */
+    }
+    
+    .card-title {
+        font-size: 1.1rem; /* Slightly smaller title font on smaller screens */
+    }
+    
+</style>
