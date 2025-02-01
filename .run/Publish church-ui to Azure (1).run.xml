@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Publish church-ui to Azure (1)" type="AzureWebAppDeploy">
+    <option name="appServicePlanName" value="church-dev-asp-01" />
+    <option name="appServicePlanResourceGroupName" value="church-dev01-rg" />
+    <option name="operatingSystem" value="Linux" />
+    <option name="pricingSize" value="F1" />
+    <option name="pricingTier" value="Free" />
+    <option name="projectConfiguration" value="Release" />
+    <option name="projectPlatform" value="Any CPU" />
+    <option name="publishableProjectPath" value="$PROJECT_DIR$/church-ui/church-ui.csproj" />
+    <option name="region" value="australiaeast" />
+    <option name="resourceGroupName" value="church-dev01-rg" />
+    <option name="subscriptionId" value="7c3aee63-0f3a-404b-a9de-f784bb35db35" />
+    <option name="webAppName" value="church-dev-webapp-01" />
+    <method v="2" />
+  </configuration>
+</component>

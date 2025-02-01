@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Storage.Blobs;
+using Azure.Storage.Sas;
 using Models;
 
 namespace Controllers;
@@ -13,17 +14,24 @@ public class PrayerCardExcelController : Controller
 {
     private readonly GoogleSheetsService _googleSheetsService;
     private readonly string _connectionString;
+    private readonly string _storageAccountName;
     private readonly string _containerName;
     
     public PrayerCardExcelController(IConfiguration configuration)
     {
         _googleSheetsService = new GoogleSheetsService();
         _connectionString = configuration["ChurchStorage:ConnectionString"];
+        _storageAccountName = configuration["ChurchStorage:AccountName"];
         _containerName = configuration["ChurchStorage:ContainerName"];
     }
     
     public async Task<IActionResult> Index()
     {
+        foreach (var claim in User.Claims)
+        {
+            Console.WriteLine($"{claim.Type}: {claim.Value}");
+        }
+        
         List<Adult> adults = await _googleSheetsService.ReadDataAsync();
 
         // Filter out invalid entries (adult names and youth age != 0)
@@ -37,19 +45,52 @@ public class PrayerCardExcelController : Controller
     public async Task<IActionResult> Details(int id)
     {
         var credential = new DefaultAzureCredential();
-        // Create BlobServiceClient to interact with Azure Blob Storage
-        BlobServiceClient blobServiceClient = new BlobServiceClient(new Uri("https://churchdevst01.blob.core.windows.net"), credential);
-        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+        BlobServiceClient blobServiceClient;
 
-        // List all blobs for this AdultId (container/AdultId/ image.jpg)
-        var images = new List<string>();
+        if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+        {
+            blobServiceClient = new BlobServiceClient(_connectionString);
+        }
+        else
+        {
+            blobServiceClient = new BlobServiceClient(
+                new Uri($"https://{_storageAccountName}.blob.core.windows.net"), 
+                credential);
+        }
+
+        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+        Console.WriteLine($"Container Name: {_containerName}");
+
+        var images = new List<(string Name, string SasUrl)>(); // Tuple list to store both name & SAS URL
 
         await foreach (var blobItem in containerClient.GetBlobsAsync(prefix: $"{id}/"))
         {
-            images.Add(blobItem.Name); // Collect all image names for the specific AdultId
+            var blobClient = containerClient.GetBlobClient(blobItem.Name);
+            var sasUri = GetSasUri(blobClient, TimeSpan.FromHours(1)); // Generate SAS URL
+
+            images.Add((blobItem.Name, sasUri.ToString())); // Store name and SAS URL
         }
 
-        // Return the view and pass the list of images
         return View(images);
     }
-}
+
+    private Uri GetSasUri(BlobClient blobClient, TimeSpan expiryTime)
+    {
+        if (!blobClient.CanGenerateSasUri)
+        {
+            throw new InvalidOperationException("BlobClient is missing permissions to generate SAS.");
+        }
+
+        var sasBuilder = new BlobSasBuilder
+        {
+            BlobContainerName = blobClient.BlobContainerName,
+            BlobName = blobClient.Name,
+            Resource = "b", // "b" means blob
+            ExpiresOn = DateTimeOffset.UtcNow.Add(expiryTime)
+        };
+
+        sasBuilder.SetPermissions(BlobSasPermissions.Read); // Read-only access
+
+        return blobClient.GenerateSasUri(sasBuilder);
+    }
+}   

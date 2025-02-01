@@ -13,40 +13,11 @@ namespace attempt1
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            var initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ') ?? builder.Configuration["MicrosoftGraph:Scopes"]?.Split(' ');
-
-            // Add services to the container.
-            //builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-            //    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
-
-            builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration)
-            .EnableTokenAcquisitionToCallDownstreamApi(
-                //new string[] {
-                //    builder.Configuration.GetSection("DownstreamApi:Scopes:Read").Get<string>()!,
-                //    builder.Configuration.GetSection("DownstreamApi:Scopes:Write").Get<string>()!
-                //}
-            )
-            .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
-            .AddInMemoryTokenCaches();
-
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("AdminsOnly", policy =>
-                    policy.RequireClaim("groups", "AdminsUI"));
-            });
+            builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"))
+                .EnableTokenAcquisitionToCallDownstreamApi()
+                .AddInMemoryTokenCaches();
             
-            //builder.Services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("AdminsOnly", policy =>
-            //        policy.RequireAssertion(context =>
-            //        {
-            //            var groupClaimType = "groups";
-            //            var adminGroupId = "<Your-Admins-Group-Object-ID>";
-            //            return context.User.HasClaim(c =>
-            //                c.Type == groupClaimType && c.Value == adminGroupId);
-            //        }));
-            //});
-
             builder.Services.AddControllersWithViews(options =>
             {
                 var policy = new AuthorizationPolicyBuilder()

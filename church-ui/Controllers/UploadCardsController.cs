@@ -1,19 +1,22 @@
+using Azure.Identity;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers
 {
-    [Authorize(Policy = "AdminsOnly")] 
+    [Authorize(Roles = "AdminsUI")]
     public class UploadCardsController : Controller
     {
         private readonly string _connectionString;
+        private readonly string _storageAccountName;
         private readonly string _containerName;
 
         public UploadCardsController(IConfiguration configuration)
         {
             // Retrieve the connection string and container name from appsettings
             _connectionString = configuration["ChurchStorage:ConnectionString"];
+            _storageAccountName = configuration["ChurchStorage:AccountName"];
             _containerName = configuration["ChurchStorage:ContainerName"];
         }
 
@@ -34,8 +37,20 @@ namespace Controllers
 
             try
             {
-                // Create a BlobServiceClient to interact with Azure Blob Storage
-                BlobServiceClient blobServiceClient = new BlobServiceClient(_connectionString);
+                var credential = new DefaultAzureCredential();
+                BlobServiceClient blobServiceClient;
+
+                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+                {
+                    blobServiceClient = new BlobServiceClient(_connectionString);
+                }
+                else
+                {
+                    blobServiceClient = new BlobServiceClient(
+                        new Uri($"https://{_storageAccountName}.blob.core.windows.net"), 
+                        credential);
+                }
+                
                 BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
 
                 // Ensure the container exists

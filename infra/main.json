@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.33.13.18514",
-      "templateHash": "3805451028465320703"
+      "templateHash": "7190410616578154351"
     }
   },
   "parameters": {
@@ -32,6 +32,30 @@
       {
         "name": "ChurchStorage__ContainerName",
         "value": "images"
+      },
+      {
+        "name": "AzureAd__Instance",
+        "value": "https://login.microsoftonline.com/"
+      },
+      {
+        "name": "AzureAd__Domain",
+        "value": "russellmccloygooglemail.onmicrosoft.com"
+      },
+      {
+        "name": "AzureAd__TenantId",
+        "value": "574dbe58-968a-4a3a-b963-a15dfe350359"
+      },
+      {
+        "name": "AzureAd__ClientId",
+        "value": "49f8d511-c0fd-491a-845b-d947fbf286a4"
+      },
+      {
+        "name": "AzureAd__CallbackPath",
+        "value": "/signin-oidc"
+      },
+      {
+        "name": "AzureAd__ClientSecret",
+        "value": "uf.8Q~ka25zS0PceMXo5Sa-nCc0JkveacVg15c-a"
       }
     ]
   },
@@ -45,6 +69,31 @@
         "name": "Standard_LRS"
       },
       "kind": "StorageV2"
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices",
+      "apiVersion": "2023-01-01",
+      "name": "[format('{0}/{1}', parameters('storageAccountName'), 'default')]",
+      "properties": {
+        "deleteRetentionPolicy": {
+          "enabled": true,
+          "days": 7
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+      "apiVersion": "2023-01-01",
+      "name": "[format('{0}/{1}/{2}', parameters('storageAccountName'), 'default', 'images')]",
+      "properties": {
+        "publicAccess": "None"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]"
+      ]
     },
     {
       "type": "Microsoft.Web/serverfarms",
@@ -70,7 +119,8 @@
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
         "siteConfig": {
-          "appSettings": "[variables('requiredAppSettings')]"
+          "appSettings": "[variables('requiredAppSettings')]",
+          "linuxFxVersion": "DOTNETCORE|8.0"
         }
       },
       "dependsOn": [
