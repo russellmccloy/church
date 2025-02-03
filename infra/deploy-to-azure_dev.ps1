@@ -37,4 +37,6 @@ New-AzResourceGroupDeployment `
 # Clean up resources
 # Remove-AzResourceGroup -Name $resourceGroupName -Force
 
+# az keyvault secret set --vault-name church-dev-kv-01 --name googleSheetCredentialsJson --value @church-ui/credentialsdev.json
+
 

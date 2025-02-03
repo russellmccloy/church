@@ -2,28 +2,34 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Models;
 
-public class GoogleSheetsService
+public class GoogleSheetsService : IGoogleSheetsService
 {
     private static readonly string[] Scopes = { SheetsService.Scope.SpreadsheetsReadonly };
-    private readonly string ApplicationName = "prayercards";
+    private readonly string _applicationName;
+    private readonly string _spreadsheetId;
+    private readonly string _credentialsJson;
 
-    private readonly string
-        SpreadsheetId = "1dxKkT5T9WZVUPhFjBahceJo8TXnce-1anxOK_aEKl9g"; // Replace with your Google Sheet ID
+    private readonly string SheetName = "Prayer Warriors"; 
 
-    private readonly string SheetName = "Prayer Warriors"; // Adjust as needed
-    private readonly string CredentialsPath = "credentials.json"; // Ensure this is correct
+    public GoogleSheetsService(IConfiguration configuration)
+    {
+        _spreadsheetId = configuration["GoogleSheet:SpreadsheetId"];
+        _applicationName = configuration["GoogleSheet:ApplicationName"];
+        _credentialsJson = configuration["GoogleSheet:CredentialsJson"];
+    }
 
     public async Task<List<Adult>> ReadDataAsync()
     {
-      GoogleCredential credential;
-        using (var stream = new FileStream(CredentialsPath, FileMode.Open, FileAccess.Read))
+        GoogleCredential credential;
+        using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(_credentialsJson)))
         {
             credential = GoogleCredential.FromStream(stream).CreateScoped(Scopes);
         }
@@ -31,11 +37,11 @@ public class GoogleSheetsService
         var service = new SheetsService(new BaseClientService.Initializer()
         {
             HttpClientInitializer = credential,
-            ApplicationName = ApplicationName,
+            ApplicationName = _applicationName,
         });
 
         string range = $"{SheetName}!A:D"; 
-        SpreadsheetsResource.ValuesResource.GetRequest request = service.Spreadsheets.Values.Get(SpreadsheetId, range);
+        SpreadsheetsResource.ValuesResource.GetRequest request = service.Spreadsheets.Values.Get(_spreadsheetId, range);
 
         ValueRange response = await request.ExecuteAsync();
         IList<IList<object>> values = response.Values;
@@ -44,29 +50,24 @@ public class GoogleSheetsService
 
         if (values != null && values.Count > 1)
         {
-            foreach (var row in values.Skip(1)) // Skip the header row
+            foreach (var row in values.Skip(1))
             {
-                if (row.Count < 3) continue; // Ensure row has enough columns
+                if (row.Count < 3) continue;
 
-                // Parse the adult ID from the row and check if the parsing is successful
                 int adultId;
                 bool isParsed = int.TryParse(row[0].ToString(), out adultId);
-
-                // Find if the adult already exists in the list (by AdultId) if parsing is successful
                 var adult = isParsed ? adults.FirstOrDefault(a => a.AdultId == adultId) : null;
 
                 if (adult == null)
                 {
-                    // Create a new adult and add them to the list if not found
                     adult = new Adult
                     {
-                        AdultId = adultId, // Use the parsed adult ID
+                        AdultId = adultId,
                         AdultName = row[1].ToString()
                     };
                     adults.Add(adult);
                 }
 
-                // Add youth under the existing adult
                 adult.YouthList.Add(new Youth
                 {
                     Name = row[2].ToString(),

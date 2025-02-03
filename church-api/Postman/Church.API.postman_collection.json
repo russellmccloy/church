@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "f8ec89ab-98ef-4a5d-ae59-e34ff0f7693e",
+		"name": "Church.API",
+		"description": "This Postman collection is to help you directly consume the backend Arinco Document Chat REST API.  \nYou will need to setup 2 Microsoft Entra Applications in Azure to allow Postman to authenticate. Please see this link for the instructions on how to do this: [Setup 2 Microsoft Entra Applications](https://github.com/arincoau/arinco-ai-document-chat/blob/main/docs/SETUP_AZURE_ENTRA_APPLICATIONS_FOR_SERVER_AND_CLIENT.md)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48782"
+	},
+	"item": [
+		{
+			"name": "PrayerCards",
+			"item": [
+				{
+					"name": "storage",
+					"item": [
+						{
+							"name": "upload",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file",
+											"src": "/C:/Users/russe/Desktop/2.png"
+										},
+										{
+											"key": "description",
+											"value": "this is the desc",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/api/storage/upload",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"storage",
+										"upload"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Cosmos",
+					"item": [
+						{
+							"name": "Insert PrayerCard",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"id\": \"6\",\r\n  \"name\": \"russ06\",\r\n  \"desc\": \"desc06\",\r\n  \"userId\": \"8F34385D-AA50-4320-9F4F-19E23818A679\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/api/CosmosDb",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"CosmosDb"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "PrayerCards by UserId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/PrayerCard/4c368958-f197-455b-a6f0-4cb56d4a97a9",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PrayerCard",
+								"4c368958-f197-455b-a6f0-4cb56d4a97a9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add PrayerCard",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": \"12\",\r\n  \"name\": \"russ12\",\r\n  \"description\": \"desc12\",\r\n  \"userId\": \"8f34385d-aa50-4320-9f4f-19e23818a679\",\r\n  \"imagePath\": \"C:\\\\Users\\\\russe\\\\Desktop\\\\1.png\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/PrayerCard",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"PrayerCard"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "WeatherForecast",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/WeatherForecast",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"WeatherForecast"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "useBrowser",
+				"value": false,
+				"type": "boolean"
+			},
+			{
+				"key": "scope",
+				"value": "openid api://{{api_app_id}}/access_as_user",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "body",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "authorization_code_with_pkce",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{client_app_id}}",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "https://login.microsoftonline.com/{{tenant_id}}/oauth2/v2.0/token",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "https://login.microsoftonline.com/{{tenant_id}}/oauth2/v2.0/authorize",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "WebAPI",
+				"type": "string"
+			},
+			{
+				"key": "redirect_uri",
+				"value": "https://oauth.pstmn.io/v1/callback",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://localhost:7128"
+		},
+		{
+			"key": "api_app_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "client_app_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "tenant_id",
+			"value": "e27c8f55-2c8d-4851-8059-1199a3dab677",
+			"type": "string"
+		},
+		{
+			"key": "documentCollectionId",
+			"value": "037f9c32-a00c-472c-be04-6307de04dc8c"
+		},
+		{
+			"key": "chatId",
+			"value": "18728bee-4620-4935-8ab9-147c34779b8c"
+		},
+		{
+			"key": "documentId",
+			"value": "3364906b-2381-4f35-ba8c-c8c3238ec7f3",
+			"type": "string"
+		},
+		{
+			"key": "randomWordForChatSessionName",
+			"value": ""
+		}
+	]
+}

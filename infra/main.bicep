@@ -2,6 +2,46 @@ param location string = resourceGroup().location
 param storageAccountName string
 param webAppName string
 param appServicePlanName string
+param keyVaultName string 
+
+param azureAdInstance string
+param azureAdDomain string
+param azureAdTenantId string
+param azureAdClientId string
+param azureAdCallbackPath string
+
+@secure()
+param azureAdClientSecret string
+
+param googleSheetSpreadsheetId string
+param googleSheetApplicationName string
+
+@description('Specifies whether Azure Virtual Machines are permitted to retrieve certificates stored as secrets from the key vault.')
+param enabledForDeployment bool = false
+
+@description('Specifies whether Azure Disk Encryption is permitted to retrieve secrets from the vault and unwrap keys.')
+param enabledForDiskEncryption bool = false
+
+@description('Specifies whether Azure Resource Manager is permitted to retrieve secrets from the key vault.')
+param enabledForTemplateDeployment bool = false
+
+@description('Specifies the Azure Active Directory tenant ID that should be used for authenticating requests to the key vault. Get it by using Get-AzSubscription cmdlet.')
+param tenantId string = subscription().tenantId
+
+@description('Specifies the object ID of a user, service principal or security group in the Azure Active Directory tenant for the vault. The object ID must be unique for the list of access policies. Get it by using Get-AzADUser or Get-AzADServicePrincipal cmdlets.')
+param objectId string = '4c368958-f197-455b-a6f0-4cb56d4a97a9'
+
+@description('Specifies the permissions to secrets in the vault. Valid values are: all, get, list, set, delete, backup, restore, recover, and purge.')
+param secretsPermissions array = [
+  'get', 'list', 'Set'
+]
+
+@description('Specifies whether the key vault is a standard vault or a premium vault.')
+@allowed([
+  'standard'
+  'premium'
+])
+param skuName string = 'standard'
 
 var requiredAppSettings = [
     {
@@ -14,27 +54,39 @@ var requiredAppSettings = [
     }
     {
           name: 'AzureAd__Instance'
-          value: 'https://login.microsoftonline.com/'
+          value: azureAdInstance
     }
     {
           name: 'AzureAd__Domain'
-          value: 'russellmccloygooglemail.onmicrosoft.com'
+          value: azureAdDomain
     }
     {
           name: 'AzureAd__TenantId'
-          value: '574dbe58-968a-4a3a-b963-a15dfe350359'
+          value: azureAdTenantId
     }
     {
           name: 'AzureAd__ClientId'
-          value: '49f8d511-c0fd-491a-845b-d947fbf286a4'
+          value: azureAdClientId
     }
     {
           name: 'AzureAd__CallbackPath'
-          value: '/signin-oidc'
+          value: azureAdCallbackPath
     }
     {
           name: 'AzureAd__ClientSecret'
-          value: 'uf.8Q~ka25zS0PceMXo5Sa-nCc0JkveacVg15c-a'
+          value: azureAdClientSecret
+    }
+    {
+          name: 'GoogleSheet__SpreadsheetId'
+          value: googleSheetSpreadsheetId
+    }
+    {
+          name: 'GoogleSheet__ApplicationName'
+          value: googleSheetApplicationName
+    }
+    { 
+      name: 'GoogleSheet__CredentialsJson'
+      value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/googleSheetCredentialsJson)' 
     }
 ]
 
@@ -96,6 +148,48 @@ resource webApp 'Microsoft.Web/sites@2022-09-01' = {
     }
   }
 }
+
+resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
+  name: keyVaultName
+  location: location
+  properties: {
+    enabledForDeployment: enabledForDeployment
+    enabledForDiskEncryption: enabledForDiskEncryption
+    enabledForTemplateDeployment: enabledForTemplateDeployment
+    tenantId: tenantId
+    enableSoftDelete: true
+    softDeleteRetentionInDays: 90
+    accessPolicies: [
+      {
+        objectId: objectId
+        tenantId: tenantId
+        permissions: {
+          secrets: secretsPermissions
+        }
+      }
+    {
+      tenantId: tenantId
+      objectId: webApp.identity.principalId // Grants web app access to KV
+      permissions: {
+        secrets: secretsPermissions
+      }
+    }
+    ]
+    sku: {
+      name: skuName
+      family: 'A'
+    }
+    networkAcls: {
+      defaultAction: 'Allow'
+      bypass: 'AzureServices'
+    }
+  }
+}
+
+// resource googleSheetSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' existing = {
+//   name: 'googleSheetCredentialsJson'
+//   parent: kv
+// }
 
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(webApp.id, 'StorageBlobDataContributor')

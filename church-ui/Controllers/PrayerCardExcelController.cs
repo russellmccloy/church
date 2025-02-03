@@ -12,17 +12,17 @@ namespace Controllers;
 
 public class PrayerCardExcelController : Controller
 {
-    private readonly GoogleSheetsService _googleSheetsService;
     private readonly string _connectionString;
     private readonly string _storageAccountName;
     private readonly string _containerName;
-    
-    public PrayerCardExcelController(IConfiguration configuration)
+    private readonly IGoogleSheetsService _googleSheetsService;
+    public PrayerCardExcelController(IConfiguration configuration, IGoogleSheetsService googleSheetsService)
     {
-        _googleSheetsService = new GoogleSheetsService();
+        _googleSheetsService = googleSheetsService;
         _connectionString = configuration["ChurchStorage:ConnectionString"];
         _storageAccountName = configuration["ChurchStorage:AccountName"];
         _containerName = configuration["ChurchStorage:ContainerName"];
+        
     }
     
     public async Task<IActionResult> Index()

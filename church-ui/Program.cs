@@ -30,7 +30,8 @@ namespace attempt1
 
             // Add configuration for Azure Blob Storage
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-            
+            builder.Services.AddScoped<IGoogleSheetsService, GoogleSheetsService>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
