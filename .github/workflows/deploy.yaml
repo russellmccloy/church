@@ -1,0 +1,62 @@
+name: Deploy Infrastructure and Web App
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/dev'
+
+jobs:
+  deploy_infrastructure:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Azure CLI
+        uses: azure/setup-azurecli@v1
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      - name: Deploy Infrastructure (Bicep)
+        run: |
+          az bicep install
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "Deploying production (prd) infrastructure..."
+            az deployment sub create --location australiaeast --template-file infra/environments/main.bicep --parameters infra/environments/main.prd.bicepparam
+          elif [ "${{ github.ref }}" == "refs/heads/feature/dev" ]; then
+            echo "Deploying development (dev) infrastructure..."
+            az deployment sub create --location australiaeast --template-file infra/environments/main.bicep --parameters infra/environments/main.dev.bicepparam
+          fi
+
+  deploy_web_app:
+    needs: deploy_infrastructure
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish ASP.NET MVC Web App
+        run: |
+          dotnet restore church-ui/church-ui.csproj
+          dotnet publish church-ui/church-ui.csproj -c Release -o ${{ github.workspace }}/publish
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ github.ref == 'refs/heads/main' && 'church-prd-webapp-01' || 'church-dev-webapp-01' }}
+          publish-profile: ${{ github.ref == 'refs/heads/main' && secrets.AZURE_PUBLISH_PROFILE_PRD || secrets.AZURE_PUBLISH_PROFILE_DEV }}
+          package: ${{ github.workspace }}/publish
