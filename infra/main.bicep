@@ -1,4 +1,4 @@
-// comment
+// comment 2
 param location string = resourceGroup().location
 param storageAccountName string
 param webAppName string
