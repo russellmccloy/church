@@ -3,13 +3,13 @@ name: Deploy Infrastructure and Web App
 on:
   push:
     branches:
-      - main
+      - master
       - 'feature/dev'
 
 jobs:
   deploy_infrastructure:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+    environment: ${{ github.ref == 'refs/heads/master' && 'prd' || 'dev' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
       - name: Deploy Infrastructure (Bicep)
         run: |
           az bicep install
-          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+          if [ "${{ github.ref }}" == "refs/heads/master" ]; then
             echo "Deploying production (prd) infrastructure..."
             az deployment sub create --location australiaeast --template-file infra/environments/main.bicep --parameters infra/environments/main.prd.bicepparam
           elif [ "${{ github.ref }}" == "refs/heads/feature/dev" ]; then
@@ -39,7 +39,7 @@ jobs:
   deploy_web_app:
     needs: deploy_infrastructure
     runs-on: ubuntu-latest
-    environment: ${{ github.ref == 'refs/heads/main' && 'prd' || 'dev' }}
+    environment: ${{ github.ref == 'refs/heads/master' && 'prd' || 'dev' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -57,6 +57,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ github.ref == 'refs/heads/main' && 'church-prd-webapp-01' || 'church-dev-webapp-01' }}
-          publish-profile: ${{ github.ref == 'refs/heads/main' && secrets.AZURE_PUBLISH_PROFILE_PRD || secrets.AZURE_PUBLISH_PROFILE_DEV }}
+          app-name: ${{ github.ref == 'refs/heads/master' && 'church-prd-webapp-01' || 'church-dev-webapp-01' }}
+          publish-profile: ${{ github.ref == 'refs/heads/master' && secrets.AZURE_PUBLISH_PROFILE_PRD || secrets.AZURE_PUBLISH_PROFILE_DEV }}
           package: ${{ github.workspace }}/publish
