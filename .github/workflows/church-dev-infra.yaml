@@ -45,5 +45,5 @@ jobs:
           scope: resourcegroup
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
           template-file: ./infra/main.bicep
-          parameters: './infra/environments/main.dev.bicepparam'
+          parameters: './infra/environments/main.dev.json'
           resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_DEV }}
