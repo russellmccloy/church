@@ -3,6 +3,8 @@ on:
   push:
     branches:
     - feature/dev
+    paths:
+      - './church-ui/**'
 env:
   AZURE_WEBAPP_NAME: church-dev-webapp-01
   AZURE_WEBAPP_PACKAGE_PATH: church-ui/published
