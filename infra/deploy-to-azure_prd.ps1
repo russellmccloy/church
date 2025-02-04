@@ -41,7 +41,7 @@ New-AzResourceGroupDeployment `
 # az keyvault secret set --vault-name church-prd-kv-01 --name googleSheetCredentialsJson --value @church-ui/credentialsprd.json
 
 # Azure secret
-# az keyvault secret set --vault-name church-prd-kv-01 --name azureAdClientSecret --value vxE8Q~UGgl0GR5NhI-pki0WiUwONPIWU8OJ7wbUF
+# az keyvault secret set --vault-name church-prd-kv-01 --name azureAdClientSecret --value NOT_SET
 
 # storageConnectionString
 <# 
