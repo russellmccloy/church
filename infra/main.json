@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.33.13.18514",
-      "templateHash": "7190410616578154351"
+      "templateHash": "17615405904039744915"
     }
   },
   "parameters": {
@@ -21,43 +21,94 @@
     },
     "appServicePlanName": {
       "type": "string"
-    }
-  },
-  "variables": {
-    "requiredAppSettings": [
-      {
-        "name": "ChurchStorage__AccountName",
-        "value": "[parameters('storageAccountName')]"
-      },
-      {
-        "name": "ChurchStorage__ContainerName",
-        "value": "images"
-      },
-      {
-        "name": "AzureAd__Instance",
-        "value": "https://login.microsoftonline.com/"
-      },
-      {
-        "name": "AzureAd__Domain",
-        "value": "russellmccloygooglemail.onmicrosoft.com"
-      },
-      {
-        "name": "AzureAd__TenantId",
-        "value": "574dbe58-968a-4a3a-b963-a15dfe350359"
-      },
-      {
-        "name": "AzureAd__ClientId",
-        "value": "49f8d511-c0fd-491a-845b-d947fbf286a4"
-      },
-      {
-        "name": "AzureAd__CallbackPath",
-        "value": "/signin-oidc"
-      },
-      {
-        "name": "AzureAd__ClientSecret",
-        "value": "uf.8Q~ka25zS0PceMXo5Sa-nCc0JkveacVg15c-a"
+    },
+    "keyVaultName": {
+      "type": "string"
+    },
+    "appInsightsName": {
+      "type": "string"
+    },
+    "azureAdInstance": {
+      "type": "string"
+    },
+    "azureAdDomain": {
+      "type": "string"
+    },
+    "azureAdTenantId": {
+      "type": "string"
+    },
+    "azureAdClientId": {
+      "type": "string"
+    },
+    "azureAdCallbackPath": {
+      "type": "string"
+    },
+    "googleSheetSpreadsheetId": {
+      "type": "string"
+    },
+    "googleSheetApplicationName": {
+      "type": "string"
+    },
+    "storageConnectionString": {
+      "type": "string"
+    },
+    "enabledForDeployment": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Specifies whether Azure Virtual Machines are permitted to retrieve certificates stored as secrets from the key vault."
       }
-    ]
+    },
+    "enabledForDiskEncryption": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Specifies whether Azure Disk Encryption is permitted to retrieve secrets from the vault and unwrap keys."
+      }
+    },
+    "enabledForTemplateDeployment": {
+      "type": "bool",
+      "defaultValue": false,
+      "metadata": {
+        "description": "Specifies whether Azure Resource Manager is permitted to retrieve secrets from the key vault."
+      }
+    },
+    "tenantId": {
+      "type": "string",
+      "defaultValue": "[subscription().tenantId]",
+      "metadata": {
+        "description": "Specifies the Azure Active Directory tenant ID that should be used for authenticating requests to the key vault. Get it by using Get-AzSubscription cmdlet."
+      }
+    },
+    "objectId": {
+      "type": "string",
+      "defaultValue": "4c368958-f197-455b-a6f0-4cb56d4a97a9",
+      "metadata": {
+        "description": "Specifies the object ID of a user, service principal or security group in the Azure Active Directory tenant for the vault. The object ID must be unique for the list of access policies. Get it by using Get-AzADUser or Get-AzADServicePrincipal cmdlets."
+      }
+    },
+    "secretsPermissions": {
+      "type": "array",
+      "defaultValue": [
+        "get",
+        "list",
+        "Set"
+      ],
+      "metadata": {
+        "description": "Specifies the permissions to secrets in the vault. Valid values are: all, get, list, set, delete, backup, restore, recover, and purge."
+      }
+    },
+    "skuName": {
+      "type": "string",
+      "defaultValue": "standard",
+      "allowedValues": [
+        "standard",
+        "premium"
+      ],
+      "metadata": {
+        "description": "Specifies whether the key vault is a standard vault or a premium vault."
+      }
+    }
   },
   "resources": [
     {
@@ -119,13 +170,122 @@
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
         "siteConfig": {
-          "appSettings": "[variables('requiredAppSettings')]",
+          "appSettings": [
+            {
+              "name": "ChurchStorage__AccountName",
+              "value": "[parameters('storageAccountName')]"
+            },
+            {
+              "name": "ChurchStorage__ConnectionString",
+              "value": "[parameters('storageConnectionString')]"
+            },
+            {
+              "name": "ChurchStorage__ContainerName",
+              "value": "images"
+            },
+            {
+              "name": "AzureAd__Instance",
+              "value": "[parameters('azureAdInstance')]"
+            },
+            {
+              "name": "AzureAd__Domain",
+              "value": "[parameters('azureAdDomain')]"
+            },
+            {
+              "name": "AzureAd__TenantId",
+              "value": "[parameters('azureAdTenantId')]"
+            },
+            {
+              "name": "AzureAd__ClientId",
+              "value": "[parameters('azureAdClientId')]"
+            },
+            {
+              "name": "AzureAd__CallbackPath",
+              "value": "[parameters('azureAdCallbackPath')]"
+            },
+            {
+              "name": "AzureAd__ClientSecret",
+              "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/azureAdClientSecret)', parameters('keyVaultName'))]"
+            },
+            {
+              "name": "GoogleSheet__SpreadsheetId",
+              "value": "[parameters('googleSheetSpreadsheetId')]"
+            },
+            {
+              "name": "GoogleSheet__ApplicationName",
+              "value": "[parameters('googleSheetApplicationName')]"
+            },
+            {
+              "name": "GoogleSheet__CredentialsJson",
+              "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/googleSheetCredentialsJson)', parameters('keyVaultName'))]"
+            },
+            {
+              "name": "ApplicationInsights__ConnectionString",
+              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').ConnectionString]"
+            },
+            {
+              "name": "ASPNETCORE_ENVIRONMENT",
+              "value": "Development"
+            }
+          ],
           "linuxFxVersion": "DOTNETCORE|8.0"
         }
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Insights/components', parameters('appInsightsName'))]",
         "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
       ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2023-07-01",
+      "name": "[parameters('keyVaultName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "enabledForDeployment": "[parameters('enabledForDeployment')]",
+        "enabledForDiskEncryption": "[parameters('enabledForDiskEncryption')]",
+        "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+        "tenantId": "[parameters('tenantId')]",
+        "enableSoftDelete": true,
+        "softDeleteRetentionInDays": 90,
+        "accessPolicies": [
+          {
+            "objectId": "[parameters('objectId')]",
+            "tenantId": "[parameters('tenantId')]",
+            "permissions": {
+              "secrets": "[parameters('secretsPermissions')]"
+            }
+          },
+          {
+            "tenantId": "[parameters('tenantId')]",
+            "objectId": "[reference(resourceId('Microsoft.Web/sites', parameters('webAppName')), '2022-09-01', 'full').identity.principalId]",
+            "permissions": {
+              "secrets": "[parameters('secretsPermissions')]"
+            }
+          }
+        ],
+        "sku": {
+          "name": "[parameters('skuName')]",
+          "family": "A"
+        },
+        "networkAcls": {
+          "defaultAction": "Allow",
+          "bypass": "AzureServices"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Insights/components",
+      "apiVersion": "2020-02-02",
+      "name": "[parameters('appInsightsName')]",
+      "location": "[parameters('location')]",
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web"
+      }
     },
     {
       "type": "Microsoft.Authorization/roleAssignments",

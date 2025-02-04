@@ -3,6 +3,7 @@ param storageAccountName string
 param webAppName string
 param appServicePlanName string
 param keyVaultName string 
+param appInsightsName string
 
 param azureAdInstance string
 param azureAdDomain string
@@ -10,11 +11,10 @@ param azureAdTenantId string
 param azureAdClientId string
 param azureAdCallbackPath string
 
-@secure()
-param azureAdClientSecret string
-
 param googleSheetSpreadsheetId string
 param googleSheetApplicationName string
+
+param storageConnectionString string
 
 @description('Specifies whether Azure Virtual Machines are permitted to retrieve certificates stored as secrets from the key vault.')
 param enabledForDeployment bool = false
@@ -49,8 +49,12 @@ var requiredAppSettings = [
         value: storageAccountName
     }
     {
-        name: 'ChurchStorage__ContainerName'
-        value: 'images'
+        name: 'ChurchStorage__ConnectionString'
+        value: storageConnectionString 
+    }
+   {
+          name: 'ChurchStorage__ContainerName'
+          value: 'images'  
     }
     {
           name: 'AzureAd__Instance'
@@ -74,7 +78,7 @@ var requiredAppSettings = [
     }
     {
           name: 'AzureAd__ClientSecret'
-          value: azureAdClientSecret
+          value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/azureAdClientSecret)' 
     }
     {
           name: 'GoogleSheet__SpreadsheetId'
@@ -87,6 +91,14 @@ var requiredAppSettings = [
     { 
       name: 'GoogleSheet__CredentialsJson'
       value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/googleSheetCredentialsJson)' 
+    }
+    {
+        name: 'ApplicationInsights__ConnectionString'
+        value: appInsightsInstance.properties.ConnectionString
+    }
+    {
+        name: 'ASPNETCORE_ENVIRONMENT'
+        value: 'Development'
     }
 ]
 
@@ -186,10 +198,14 @@ resource kv 'Microsoft.KeyVault/vaults@2023-07-01' = {
   }
 }
 
-// resource googleSheetSecret 'Microsoft.KeyVault/vaults/secrets@2023-07-01' existing = {
-//   name: 'googleSheetCredentialsJson'
-//   parent: kv
-// }
+resource appInsightsInstance 'Microsoft.Insights/components@2020-02-02' = {
+  name: appInsightsName
+  location: location
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+  }
+}
 
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(webApp.id, 'StorageBlobDataContributor')

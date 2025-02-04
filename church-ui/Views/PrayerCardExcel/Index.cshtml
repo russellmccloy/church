@@ -8,14 +8,16 @@
         {
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm rounded-3 hover-shadow">
-                    <div class="text-center @(adult.AdultName == "zzSpare" ? "card-header-spare" : "card-header")">
+                    <div class="text-center @(adult.AdultName == "Unassigned" ? "card-header-spare" : "card-header")">
                         <h5 class="card-title">
-                            @adult.AdultName
+                            <a href="@Url.Action("Details", "PrayerCardExcel", new { id = adult.AdultId })" class="text-white">
+                                @adult.AdultName
+                            </a>
                             <br />
                             <a href="@Url.Action("Details", "PrayerCardExcel", new { id = adult.AdultId })" class="text-white" style="font-size: 0.9rem;">View your prayer cards for the following youth</a>
                         </h5>
                     </div>
-                    <div class=" @(adult.AdultName == "zzSpare" ? "card-body-spare" : "card-body")">
+                    <div class=" @(adult.AdultName == "Unassigned" ? "card-body-spare" : "card-body")">
                         @foreach (var youth in adult.YouthList)
                         {
                             <div class="mb-3">

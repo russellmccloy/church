@@ -37,5 +37,13 @@ New-AzResourceGroupDeployment `
 # Clean up resources
 # Remove-AzResourceGroup -Name $resourceGroupName -Force
 
+# Google Sheets
 # az keyvault secret set --vault-name church-prd-kv-01 --name googleSheetCredentialsJson --value @church-ui/credentialsprd.json
 
+# Azure secret
+# az keyvault secret set --vault-name church-prd-kv-01 --name azureAdClientSecret --value vxE8Q~UGgl0GR5NhI-pki0WiUwONPIWU8OJ7wbUF
+
+# storageConnectionString
+<# 
+az keyvault secret set --vault-name church-prd-kv-01 --name storageConnectionString --value 'DefaultEndpointsProtocol=https;AccountName=churchprdst01;AccountKey=6Ny8cCyJCHtKNvOH48A5whvOCPPNeUkST/I2yMAjfFs2rcxSU3cOH7j4sHaR92iypBI4aYCbbS+J+AStJW0KvA==;EndpointSuffix=core.windows.net'
+#>
