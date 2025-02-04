@@ -1,4 +1,4 @@
-name: Deploy Bicep to Dev
+name: Deploy Infrastructure to Dev
 
 on:
   push:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   deploy-dev:
-    name: Deploy to Dev Environment
+    name: Deploy Infrastructure to Dev Environment
     runs-on: ubuntu-latest
 
     steps:
@@ -33,4 +33,4 @@ jobs:
           template: infra/main.bicep
           parameters: '@infra/environments/main.dev.bicepparam'
           deploymentMode: Incremental
-          scope: ResourceGroup
+          scope: resourcegroup
