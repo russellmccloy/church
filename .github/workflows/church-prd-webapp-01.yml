@@ -4,9 +4,6 @@ on:
     workflows: ["Deploy Infrastructure to Prd"]
     types:
       - completed  
-  pull_request:
-    branches:
-      - master
     paths:
       - 'church-ui/**'  
 
