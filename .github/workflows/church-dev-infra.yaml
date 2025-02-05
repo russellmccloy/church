@@ -47,3 +47,12 @@ jobs:
           template-file: ./infra/main.bicep
           parameters: './infra/environments/main.dev.json'
           resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_DEV }}
+
+      - name: Deploy Resources
+        run: |
+          az deployment group create \
+            --name 'dev' \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP_DEV }} \
+            --template-file ./infra/main.bicep \
+            --parameters ./infra/environments/main.dev.bicepparam
+        id: deploy
