@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'infra/**'
+  workflow_dispatch:  # Allows manual triggering
 
 permissions:
   id-token: write

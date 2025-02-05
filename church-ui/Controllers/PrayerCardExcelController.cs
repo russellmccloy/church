@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using Azure.Identity;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
+using Microsoft.AspNetCore.Authorization;
 using Models;
 
 namespace Controllers;
 
+[Authorize(Roles = "UsersUI")]
 public class PrayerCardExcelController : Controller
 {
     private readonly string _connectionString;

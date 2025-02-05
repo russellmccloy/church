@@ -6,6 +6,7 @@ on:
       - completed  
     paths:
       - 'church-ui/**'  
+  workflow_dispatch:  # Allows manual triggering
 
 env:
   AZURE_WEBAPP_NAME: church-prd-webapp-01
