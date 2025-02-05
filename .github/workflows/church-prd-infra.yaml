@@ -1,9 +1,11 @@
 name: Deploy Infrastructure to Prd
 
 on:
-  push:
+  pull_request:
     branches:
       - master
+    types:
+      - closed
     paths:
       - 'infra/**'
 
