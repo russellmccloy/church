@@ -35,18 +35,18 @@ jobs:
     #       deploymentMode: Incremental
     #       scope: resourcegroup
 
-      - name: Deployment
-        uses: azure/bicep-deploy@v2
-        with:
-          type: deployment
-          operation: create
-          name: dev
-          location: australiaeast
-          scope: resourcegroup
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          template-file: ./infra/main.bicep
-          parameters: './infra/environments/main.dev.json'
-          resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_DEV }}
+    #   - name: Deployment
+    #     uses: azure/bicep-deploy@v2
+    #     with:
+    #       type: deployment
+    #       operation: create
+    #       name: dev
+    #       location: australiaeast
+    #       scope: resourcegroup
+    #       subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    #       template-file: ./infra/main.bicep
+    #       parameters: './infra/environments/main.dev.json'
+    #       resource-group-name: ${{ secrets.AZURE_RESOURCE_GROUP_DEV }}
 
       - name: Deploy Resources
         run: |
