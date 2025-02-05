@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - feature/dev
-      paths:
-        - 'infra/**'
-    workflow_dispatch:  # Allows manual triggering
+    paths:
+    - 'infra/**'
+  workflow_dispatch:  # Allows manual triggering
 
 permissions:
   id-token: write
