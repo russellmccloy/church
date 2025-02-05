@@ -1,11 +1,12 @@
 name: Deploy Infrastructure to Dev
 
 on:
-  push:
-    branches:
-      - feature/dev
-    paths:
-      - 'infra/**'
+    push:
+      branches:
+        - feature/dev
+      paths:
+        - 'infra/**'
+    workflow_dispatch:  # Allows manual triggering
 
 permissions:
   id-token: write
