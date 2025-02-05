@@ -1,8 +1,11 @@
 name: Build and deploy .NET Core application to Web App church-prd-webapp-01
 on:
-  push:
+  pull_request:
     branches:
-    - master
+      - master
+    types:
+      - closed
+      
 env:
   AZURE_WEBAPP_NAME: church-prd-webapp-01
   AZURE_WEBAPP_PACKAGE_PATH: church-ui/published
