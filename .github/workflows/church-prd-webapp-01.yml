@@ -7,7 +7,7 @@ on:
       - closed
     paths:
       - 'church-ui/**'  
-          
+
 env:
   AZURE_WEBAPP_NAME: church-prd-webapp-01
   AZURE_WEBAPP_PACKAGE_PATH: church-ui/published
