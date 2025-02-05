@@ -1,5 +1,9 @@
 name: Build and deploy .NET Core application to Web App church-dev-webapp-01
 on:
+  workflow_run:
+    workflows: ["Deploy Infrastructure to Dev"]
+    types:
+      - completed  
   push:
     branches:
     - feature/dev

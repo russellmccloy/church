@@ -1,5 +1,9 @@
 name: Build and deploy .NET Core application to Web App church-prd-webapp-01
 on:
+  workflow_run:
+    workflows: ["Deploy Infrastructure to Prd"]
+    types:
+      - completed  
   pull_request:
     branches:
       - master
