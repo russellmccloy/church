@@ -101,6 +101,10 @@ var requiredAppSettings = [
         name: 'ASPNETCORE_ENVIRONMENT'
         value: 'Development'
     }
+    {
+        name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+        value: appInsightsInstance.properties.ConnectionString
+    }
 ]
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
