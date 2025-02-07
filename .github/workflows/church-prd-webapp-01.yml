@@ -4,8 +4,8 @@ on:
     workflows: ["Deploy Infrastructure to Prd"]
     types:
       - completed  
-    paths:
-      - 'church-ui/**'  
+#    paths:
+#      - 'church-ui/**'  
   workflow_dispatch:  # Allows manual triggering
 
 env:
