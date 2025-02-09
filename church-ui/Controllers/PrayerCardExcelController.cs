@@ -34,10 +34,15 @@ public class PrayerCardExcelController : Controller
     
     public async Task<IActionResult> Index()
     {
-        foreach (var claim in User.Claims)
+        var roleClaims = User.Claims.Where(c => c.Type == "roles" || 
+                                                c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
+
+        _logger.LogInformation($"User Roles:");
+        foreach (var claim in roleClaims)
         {
-            Console.WriteLine($"{claim.Type}: {claim.Value}");
+            _logger.LogInformation($"User Role: {claim.Value}");
         }
+
         
         List<Adult> adults = await _googleSheetsService.ReadDataAsync();
 

@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-#    paths:
-#      - 'infra/**'
+  #      paths:
+  #        - 'infra/**'
   workflow_dispatch:  # Allows manual triggering
 
 permissions:
