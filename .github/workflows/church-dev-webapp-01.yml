@@ -1,14 +1,12 @@
 name: Build and deploy .NET Core application to Web App church-dev-webapp-01
-on:
-  workflow_run:
-    workflows: ["Deploy Infrastructure to Dev"]
-    types:
-      - completed  
+on: 
   push:
     branches:
-    - feature/dev
-    paths:
-      - 'church-ui/**'
+      - feature/dev
+#    paths:
+#      - 'church-ui/**'
+  workflow_dispatch:  # Allows manual triggering
+  
 env:
   AZURE_WEBAPP_NAME: church-dev-webapp-01
   AZURE_WEBAPP_PACKAGE_PATH: church-ui/published
