@@ -17,3 +17,5 @@ param googleSheetSpreadsheetId = '1dxKkT5T9WZVUPhFjBahceJo8TXnce-1anxOK_aEKl9g'
 param googleSheetApplicationName = 'PrayerCards'
 
 param storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=churchprdst01;AccountKey=6Ny8cCyJCHtKNvOH48A5whvOCPPNeUkST/I2yMAjfFs2rcxSU3cOH7j4sHaR92iypBI4aYCbbS+J+AStJW0KvA==;EndpointSuffix=core.windows.net'
+
+param ASPNETCORE_ENVIRONMENT = 'Production'

@@ -8,6 +8,8 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using Microsoft.AspNetCore.Authorization;
 using Models;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
 
 namespace Controllers;
 
@@ -19,30 +21,43 @@ public class PrayerCardExcelController : Controller
     private readonly string _containerName;
     private readonly IGoogleSheetsService _googleSheetsService;
     private readonly ILogger<PrayerCardExcelController> _logger;
-
+    private readonly TelemetryClient _telemetryClient;
+    
     public PrayerCardExcelController(IConfiguration configuration, 
         IGoogleSheetsService googleSheetsService, 
-        ILogger<PrayerCardExcelController> logger)
+        ILogger<PrayerCardExcelController> logger, TelemetryClient telemetryClient)
     {
+        _telemetryClient = telemetryClient;
         _googleSheetsService = googleSheetsService;
         _connectionString = configuration["ChurchStorage:ConnectionString"];
         _storageAccountName = configuration["ChurchStorage:AccountName"];
         _containerName = configuration["ChurchStorage:ContainerName"];
         _logger = logger;
-
     }
     
     public async Task<IActionResult> Index()
-    {
-        var roleClaims = User.Claims.Where(c => c.Type == "roles" || 
-                                                c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role");
+    {       
+        var userName = User.Identity?.Name ?? "UnknownUser";
 
-        _logger.LogInformation($"User Roles:");
-        foreach (var claim in roleClaims)
+        // Create a custom event with custom dimensions
+        var telemetry = new TraceTelemetry("User Accessed the Page")
         {
-            _logger.LogInformation($"User Role: {claim.Value}");
-        }
+            SeverityLevel = SeverityLevel.Information
+        };
+        telemetry.Properties["WhoLoggedOn"] = userName;
 
+        // Track the event
+        _telemetryClient.TrackTrace(telemetry);
+        
+        var roleClaims = User.Claims
+            .Where(c => c.Type == "roles" || c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
+            .Select(c => c.Value)
+            .ToList();
+
+        var logMessage = $"Logged-in User: {userName}, Roles: {string.Join(", ", roleClaims)}";
+    
+        _telemetryClient.TrackTrace(logMessage);
+        _telemetryClient.Flush();
         
         List<Adult> adults = await _googleSheetsService.ReadDataAsync();
 
@@ -56,22 +71,15 @@ public class PrayerCardExcelController : Controller
     
     public async Task<IActionResult> Details(int id)
     {
-        //var credential = new DefaultAzureCredential();
-        BlobServiceClient blobServiceClient;
+        var userName = User.Identity?.Name;
 
-        // if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-        // {
-            _logger.LogInformation(("Using the connection string to create the BlobServiceClient."));
-            blobServiceClient = new BlobServiceClient(_connectionString);
-        // }
-        // else
-        // {
-        //     _logger.LogInformation("Using the DefaultAzureCredential  to create the BlobServiceClient.");
-        //     blobServiceClient = new BlobServiceClient(
-        //         new Uri($"https://{_storageAccountName}.blob.core.windows.net"), 
-        //         credential);
-        // }
-
+        var logMessage = $"Logged-in User: {userName} viewed their Prayer Cards";
+        _telemetryClient.TrackTrace(logMessage);
+        _telemetryClient.Flush();
+        
+        _logger.LogInformation(("Using the connection string to create the BlobServiceClient."));
+        var blobServiceClient = new BlobServiceClient(_connectionString);
+        
         BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
         Console.WriteLine($"Container Name: {_containerName}");
 
