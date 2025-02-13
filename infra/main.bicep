@@ -96,7 +96,7 @@ var requiredAppSettings = [
       value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/googleSheetCredentialsJson)' 
     }
     {
-        name: 'ApplicationInsights__ConnectionString'
+        name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
         value: appInsightsInstance.properties.ConnectionString
     }
     {
