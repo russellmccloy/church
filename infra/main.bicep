@@ -96,16 +96,12 @@ var requiredAppSettings = [
       value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/googleSheetCredentialsJson)' 
     }
     {
+        name: 'ApplicationInsights__ConnectionString'
+        value: appInsightsInstance.properties.ConnectionString
+    }
+    {
         name: 'ASPNETCORE_ENVIRONMENT'
-        value: ASPNETCORE_ENVIRONMENT
-    }
-    {
-        name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-        value: appInsightsInstance.properties.ConnectionString
-    }
-    {
-        name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-        value: appInsightsInstance.properties.ConnectionString
+        value: 'Development'
     }
 ]
 
@@ -214,13 +210,11 @@ resource appInsightsInstance 'Microsoft.Insights/components@2020-02-02' = {
   }
 }
 
-// resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-//   name: guid(resourceGroup().id, 'StorageBlobDataContributor')
-//   scope: resourceGroup()
-//   properties: {
-//     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe') // Storage Blob Data Contributor role ID
-//     principalId: webApp.identity.principalId
-//   }
-// }
- 
-
+resource roleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(resourceGroup().id, 'StorageBlobDataContributor')
+  scope: resourceGroup()
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe') // Storage Blob Data Contributor role ID
+    principalId: webApp.identity.principalId
+  }
+}
