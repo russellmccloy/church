@@ -4,6 +4,8 @@
 
 <h2>Upload Cards</h2>
 
+<a asp-controller="UploadCards" asp-action="ListImages">View List >>></a>
+
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger">@TempData["Error"]</div>

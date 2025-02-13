@@ -1,0 +1,55 @@
+@model List<ImageViewModel>
+
+@{
+    ViewData["Title"] = "Uploaded Images";
+}
+
+<h2>Uploaded Images</h2>
+
+<a asp-controller="UploadCards" asp-action="Index">Upload Prayer Card >>></a>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Thumbnail</th>
+        <th>File Name</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var file in Model)
+    {
+        <tr>
+            <td>
+                <a href="javascript:void(0);" onclick="openPopup('@file.Url');">
+                    <img src="@file.Url" alt="Thumbnail" style="width: 100px; height: auto;" />
+                </a>
+            </td>
+            <td>@file.FileName</td>
+            <td>
+                <form method="post" asp-action="DeleteImage">
+                    <input type="hidden" name="fileName" value="@file.FileName" />
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<script>
+    function openPopup(url) {
+        var newWindow = window.open('', 'popup', 'width=800,height=600,scrollbars=yes');
+        newWindow.document.write('<img src="' + url + '" style="width:100%;height:auto;" />');
+    }
+</script>
