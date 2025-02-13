@@ -1,5 +1,7 @@
 using Azure.Identity;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
@@ -14,7 +16,6 @@ namespace Controllers
 
         public UploadCardsController(IConfiguration configuration)
         {
-            // Retrieve the connection string and container name from appsettings
             _connectionString = configuration["ChurchStorage:ConnectionString"];
             _storageAccountName = configuration["ChurchStorage:AccountName"];
             _containerName = configuration["ChurchStorage:ContainerName"];
@@ -37,33 +38,16 @@ namespace Controllers
 
             try
             {
-                var credential = new DefaultAzureCredential();
-                BlobServiceClient blobServiceClient;
-
-                if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
-                {
-                    blobServiceClient = new BlobServiceClient(_connectionString);
-                }
-                else
-                {
-                    blobServiceClient = new BlobServiceClient(
-                        new Uri($"https://{_storageAccountName}.blob.core.windows.net"), 
-                        credential);
-                }
-                
+                BlobServiceClient blobServiceClient = new BlobServiceClient(_connectionString);
                 BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
-
-                // Ensure the container exists
                 await containerClient.CreateIfNotExistsAsync();
 
                 foreach (var file in files)
                 {
                     if (file.Length > 0)
                     {
-                        var fileName = $"{adultId}/{Guid.NewGuid()}{Path.GetExtension(file.FileName)}"; // Create unique file name
+                        var fileName = $"{adultId}/{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
                         var blobClient = containerClient.GetBlobClient(fileName);
-
-                        // Upload the file to Azure Blob Storage
                         using (var stream = file.OpenReadStream())
                         {
                             await blobClient.UploadAsync(stream, overwrite: true);
@@ -79,6 +63,70 @@ namespace Controllers
                 TempData["Error"] = $"Error uploading images: {ex.Message}";
                 return RedirectToAction("Index");
             }
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> ListImages()
+        {
+            try
+            {
+                BlobServiceClient blobServiceClient = new BlobServiceClient(_connectionString);
+                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+                var images = new List<ImageViewModel>();
+
+                await foreach (BlobItem blobItem in containerClient.GetBlobsAsync())
+                {
+                    var blobClient = containerClient.GetBlobClient(blobItem.Name);
+                    string sasUrl = GetSasUri(blobClient, TimeSpan.FromHours(1)).ToString();
+
+                    images.Add(new ImageViewModel { FileName = blobItem.Name, Url = sasUrl });
+                }
+
+                return View(images);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Error listing images: {ex.Message}";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteImage(string fileName)
+        {
+            try
+            {
+                BlobServiceClient blobServiceClient = new BlobServiceClient(_connectionString);
+                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+                BlobClient blobClient = containerClient.GetBlobClient(fileName);
+                await blobClient.DeleteIfExistsAsync();
+                
+                TempData["Success"] = "File deleted successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Error deleting file: {ex.Message}";
+            }
+            return RedirectToAction("ListImages");
+        }
+
+        private Uri GetSasUri(BlobClient blobClient, TimeSpan expiryTime)
+        {
+            if (!blobClient.CanGenerateSasUri)
+            {
+                throw new InvalidOperationException("BlobClient is missing permissions to generate SAS.");
+            }
+
+            var sasBuilder = new BlobSasBuilder
+            {
+                BlobContainerName = blobClient.BlobContainerName,
+                BlobName = blobClient.Name,
+                Resource = "b",
+                ExpiresOn = DateTimeOffset.UtcNow.Add(expiryTime)
+            };
+
+            sasBuilder.SetPermissions(BlobSasPermissions.Read);
+            return blobClient.GenerateSasUri(sasBuilder);
         }
     }
 }
