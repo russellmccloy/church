@@ -101,7 +101,7 @@ var requiredAppSettings = [
     }
     {
         name: 'ASPNETCORE_ENVIRONMENT'
-        value: 'Development'
+        value: ASPNETCORE_ENVIRONMENT
     }
 ]
 
