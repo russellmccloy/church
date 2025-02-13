@@ -218,3 +218,4 @@ resource appInsightsInstance 'Microsoft.Insights/components@2020-02-02' = {
 //     principalId: webApp.identity.principalId
 //   }
 // }
+
