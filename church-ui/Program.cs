@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace attempt1
 {
@@ -32,6 +33,8 @@ namespace attempt1
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
             builder.Services.AddScoped<IGoogleSheetsService, GoogleSheetsService>();
 
+            builder.Services.AddApplicationInsightsTelemetry();
+            
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

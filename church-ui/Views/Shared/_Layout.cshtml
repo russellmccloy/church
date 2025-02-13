@@ -3,11 +3,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Church</title>
+    <title>Prayer Cards</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    @* <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" /> *@
-    @* <link rel="stylesheet" href="~/attempt1.styles.css" asp-append-version="true" /> *@
-    @* <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> *@
 
     <style>
         /* Custom navbar color */
@@ -43,6 +40,7 @@
 </head>
 <body>
     <header>
+
         <nav class="navbar navbar-expand-sm navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand text-black" asp-area="" asp-controller="Home" asp-action="Index">
@@ -72,6 +70,15 @@
                 </div>
             </div>
         </nav>
+        <!-- Announcement Banner -->
+        <div class="container mt-3">
+            <div class="alert alert-warning alert-dismissible fade show text-dark" role="alert">
+                <strong>⚠️ Notice:</strong> There were no Prayer Cards collected from youth group this week!
+                Please check back after the next Sunday for next week's Prayer Cards.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+
     </header>
     <div class="container">
         <main role="main" class="pb-3">
@@ -80,10 +87,16 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Church - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container d-flex justify-content-between">
+            <span>&copy; 2025 - Church - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></span>
+
+            @if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            {
+                <span class="text-danger">ENV: DEVELOPMENT</span>
+            }
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -17,6 +17,8 @@ param googleSheetApplicationName string
 
 param storageConnectionString string
 
+param ASPNETCORE_ENVIRONMENT string
+
 @description('Specifies whether Azure Virtual Machines are permitted to retrieve certificates stored as secrets from the key vault.')
 param enabledForDeployment bool = false
 
@@ -94,12 +96,12 @@ var requiredAppSettings = [
       value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/googleSheetCredentialsJson)' 
     }
     {
-        name: 'ApplicationInsights__ConnectionString'
-        value: appInsightsInstance.properties.ConnectionString
+        name: 'ASPNETCORE_ENVIRONMENT'
+        value: ASPNETCORE_ENVIRONMENT
     }
     {
-        name: 'ASPNETCORE_ENVIRONMENT'
-        value: 'Development'
+        name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+        value: appInsightsInstance.properties.ConnectionString
     }
     {
         name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'

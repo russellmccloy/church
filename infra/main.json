@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.33.13.18514",
-      "templateHash": "17615405904039744915"
+      "templateHash": "18048492622763571247"
     }
   },
   "parameters": {
@@ -50,6 +50,9 @@
       "type": "string"
     },
     "storageConnectionString": {
+      "type": "string"
+    },
+    "ASPNETCORE_ENVIRONMENT": {
       "type": "string"
     },
     "enabledForDeployment": {
@@ -220,12 +223,12 @@
               "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/googleSheetCredentialsJson)', parameters('keyVaultName'))]"
             },
             {
-              "name": "ApplicationInsights__ConnectionString",
-              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').ConnectionString]"
+              "name": "ASPNETCORE_ENVIRONMENT",
+              "value": "[parameters('ASPNETCORE_ENVIRONMENT')]"
             },
             {
-              "name": "ASPNETCORE_ENVIRONMENT",
-              "value": "Development"
+              "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').ConnectionString]"
             }
           ],
           "linuxFxVersion": "DOTNETCORE|8.0"
@@ -286,20 +289,6 @@
       "properties": {
         "Application_Type": "web"
       }
-    },
-    {
-      "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "2022-04-01",
-      "scope": "[format('Microsoft.Storage/storageAccounts/{0}', parameters('storageAccountName'))]",
-      "name": "[guid(resourceId('Microsoft.Web/sites', parameters('webAppName')), 'StorageBlobDataContributor')]",
-      "properties": {
-        "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'ba92f5b4-2d11-453d-a403-e96b0029c9fe')]",
-        "principalId": "[reference(resourceId('Microsoft.Web/sites', parameters('webAppName')), '2022-09-01', 'full').identity.principalId]"
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
-        "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
-      ]
     }
   ]
 }
