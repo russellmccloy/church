@@ -13,6 +13,7 @@ env:
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 8.0.x
   WORKING_DIRECTORY: church-ui
+  RESOURCE_GROUP: church-prd01-rg
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -44,6 +45,11 @@ jobs:
       with:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        
+    - name: Deploy to Azure WebApp
+      run: |
+       az webapp deploy --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }} --src-path church-ui/published-prd --type zip
+      
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
       with:
