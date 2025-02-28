@@ -53,7 +53,7 @@ jobs:
             
     - name: Deploy to Azure WebApp
       run: |
-       az webapp deploy --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }} --src-path church-ui/published-prd --type zip
+       az webapp deploy --resource-group ${{ env.RESOURCE_GROUP }} --name ${{ env.AZURE_WEBAPP_NAME }} --src-path "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
       
 #    - name: Deploy to Azure WebApp
 #      uses: azure/webapps-deploy@v2

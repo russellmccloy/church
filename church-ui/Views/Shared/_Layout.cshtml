@@ -59,7 +59,7 @@
                         @if (User.Identity.IsAuthenticated && User.IsInRole("AdminsUI"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="UploadCards" asp-action="ListImages">Manage Prayer Cards</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="UploadCards" asp-action="ListImages">Manage</a>
                             </li>
                         }
                         <li class="nav-item">
@@ -73,8 +73,14 @@
         <!-- Announcement Banner -->
         <div class="container mt-3">
             <div class="alert alert-warning alert-dismissible fade show text-dark" role="alert">
-                <strong>⚠️ Notice:</strong> Prayer Cards for Friday the 14th of February are ready.
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                <strong>⚠️ Note:</strong>
+                <ul>
+                    <li>The administrator of this site will ensure new Prayer Cards are uploaded here every week.</li>
+                    <li>All of your assigned youth may not have Prayer Cards for this week.</li>
+                    <li>You may be assigned extra youth to pray for as we don't have enough adults to stick with last year's allocations.</li>
+                    <li>If you have any questions, please contact Russ.</li>
+                </ul>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
 
