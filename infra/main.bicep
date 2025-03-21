@@ -15,6 +15,9 @@ param azureAdCallbackPath string
 param googleSheetSpreadsheetId string
 param googleSheetApplicationName string
 
+param geminiApiUrl string
+param geminiApiKey string
+
 param storageConnectionString string
 
 param ASPNETCORE_ENVIRONMENT string
@@ -102,6 +105,14 @@ var requiredAppSettings = [
     {
         name: 'ASPNETCORE_ENVIRONMENT'
         value: ASPNETCORE_ENVIRONMENT
+    }
+    {
+      name: 'Gemini__ApiUrl'
+      value: geminiApiUrl
+    }
+    {
+      name: 'Gemini__'
+      value: geminiApiKey
     }
 ]
 

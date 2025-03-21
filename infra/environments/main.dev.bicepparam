@@ -16,6 +16,9 @@ param azureAdCallbackPath = '/signin-oidc'
 param googleSheetSpreadsheetId = '162vKat_JS1TIpkZVXO6OCdsqGUvhfltXNCFCeqcw_GM'
 param googleSheetApplicationName = 'PrayerCards'
 
+param geminiApiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
+param geminiApiKey = 'AIzaSyAbzVg1acIMi0Ct6OdXYrDdHWkoyzHFAQk'
+
 param storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=churchdevst01;AccountKey=N5OxEMHX9zSUe+O2oI8PqGfDyNaGenuKETjg4PdfDJ2h6Ty823o56NE6D9g1e0bcyNRXggLwO2UP+AStVB7acg==;EndpointSuffix=core.windows.net'
 
 param ASPNETCORE_ENVIRONMENT = 'Development'

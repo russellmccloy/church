@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.33.13.18514",
-      "templateHash": "18048492622763571247"
+      "version": "0.33.93.31351",
+      "templateHash": "1963687870626013739"
     }
   },
   "parameters": {
@@ -47,6 +47,12 @@
       "type": "string"
     },
     "googleSheetApplicationName": {
+      "type": "string"
+    },
+    "geminiApiUrl": {
+      "type": "string"
+    },
+    "geminiApiKey": {
       "type": "string"
     },
     "storageConnectionString": {
@@ -223,12 +229,20 @@
               "value": "[format('@Microsoft.KeyVault(SecretUri=https://{0}.vault.azure.net/secrets/googleSheetCredentialsJson)', parameters('keyVaultName'))]"
             },
             {
+              "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').ConnectionString]"
+            },
+            {
               "name": "ASPNETCORE_ENVIRONMENT",
               "value": "[parameters('ASPNETCORE_ENVIRONMENT')]"
             },
             {
-              "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
-              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').ConnectionString]"
+              "name": "Gemini__ApiUrl",
+              "value": "[parameters('geminiApiUrl')]"
+            },
+            {
+              "name": "Gemini__",
+              "value": "[parameters('geminiApiKey')]"
             }
           ],
           "linuxFxVersion": "DOTNETCORE|8.0"

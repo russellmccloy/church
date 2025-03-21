@@ -17,6 +17,8 @@
                             <a href="javascript:void(0);" onclick="openPopup('@image.SasUrl');">
                                 <img src="@image.SasUrl" alt="Uploaded Image" class="img-fluid" />
                             </a>
+                            <button class="btn btn-primary mt-2" onclick="analyzeImage('@image.SasUrl', '@image.Name');">Analyze</button>
+                            <div id="analysis-@image.Name.Replace(" ", "-")" class="mt-2"></div>
                         </div>
                     </div>
                 </div>
@@ -62,7 +64,43 @@
 <script>
     function openPopup(url) {
         var newWindow = window.open('', 'popup', 'width=800,height=600,scrollbars=yes');
-        newWindow.document.body.innerHTML = ''; // Clear previous content
         newWindow.document.write('<img src="' + url + '" style="width:100%;height:auto;" />');
+    }
+
+    async function analyzeImage(imageUrl, imageName) {
+        try {
+            const response = await fetch(`/PrayerCardExcel/AnalyzeImage?imageUrl=${encodeURIComponent(imageUrl)}&imageName=${encodeURIComponent(imageName)}`);
+            if (response.ok) {
+                const result = await response.json(); // Parse the JSON response
+                const analysisDiv = document.getElementById(`analysis-${imageName.replace(" ", "-")}`);
+                analysisDiv.innerHTML = ""; // Clear previous content
+
+                if (result && !result.error) {
+                    const sentiment = result.Sentiment; // Changed to Pascal case
+                    const prayerSuggestion = result.PrayerSuggestion; // Changed to Pascal case
+                    const reasoning = result.Reasoning; // Changed to Pascal case
+
+                    // Create and append HTML elements for each field
+                    analysisDiv.innerHTML = `
+                    <div class="analysis-section">
+                        <strong>Sentiment:</strong> ${sentiment}
+                    </div>
+                    <div class="analysis-section">
+                        <strong>Prayer Suggestion:</strong> ${prayerSuggestion}
+                    </div>
+                    <div class="analysis-section">
+                        <strong>Reasoning:</strong> ${reasoning}
+                    </div>
+                `;
+                } else {
+                    analysisDiv.innerHTML = `<p>${result.error || "Analysis failed or returned invalid data."}</p>`;
+                }
+            } else {
+                document.getElementById(`analysis-${imageName.replace(" ", "-")}`).innerHTML = "<p>Error analyzing image.</p>";
+            }
+        } catch (error) {
+            console.error("Error analyzing image:", error);
+            document.getElementById(`analysis-${imageName.replace(" ", "-")}`).innerHTML = "<p>Error analyzing image.</p>";
+        }
     }
 </script>
